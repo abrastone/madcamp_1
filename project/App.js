@@ -16,9 +16,9 @@ const App = () => {
         screenOptions={({route}) => ({
           tabBarIcon: ({color, size}) => {
             let iconSource;
-            if (route.name === 'Home') {
+            if (route.name === '대회 정보') {
               iconSource = HomeIcon;
-            } else if (route.name === 'Contact') {
+            } else if (route.name === '연락처') {
               iconSource = ContactIcon;
             }
             return (
@@ -34,8 +34,8 @@ const App = () => {
           tabBarStyle: styles.tabBar,
           tabBarLabelStyle: styles.tabBarLabel,
         })}>
-        <Tab.Screen name="Contact" component={ContactScreen} />
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="연락처" component={ContactScreen} />
+        <Tab.Screen name="대회 정보" component={HomeScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

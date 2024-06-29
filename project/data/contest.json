@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "title": "한국대학생 프로그래밍 경시대회",
+  "date": "2024.10.12",
+  "host": "정보통신과학부",
+  "opening_question": 2,
+  "opening_inspect": 5,
+  "level_start": "브론즈",
+  "level_hight": "골드",
+  "total_question": 8,
+  "total_reward": 1600000,
+  "description": "안녕하세요 KAIST RUN의 회장 이예린입니다. 올해도 어김없이",
+  "url": "https://kaist.run/ko/"
+}

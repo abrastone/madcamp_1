@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Button, Image, StyleSheet} from 'react-native';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {launchImageLibrary, ImagePicker} from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 
 const PhotoScreen = () => {

@@ -1,7 +1,6 @@
-// lib/contacts_page.dart
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -11,20 +10,29 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  Iterable<Contact>? _contacts;
+  Map<String, List<dynamic>> contacts = {};
 
   @override
   void initState() {
     super.initState();
-    _getContacts();
+    _loadContacts();
   }
 
-  Future<void> _getContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      final contacts = await ContactsService.getContacts();
-      setState(() {
-        _contacts = contacts;
+  Future<void> _loadContacts() async {
+    try {
+      String jsonString = await rootBundle.loadString('assets/data/contacts.json');
+      Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
+
+      Map<String, List<dynamic>> parsedContacts = {};
+      jsonResponse['data'].forEach((key, value) {
+        parsedContacts[key] = List<dynamic>.from(value);
       });
+
+      setState(() {
+        contacts = parsedContacts;
+      });
+    } catch (e) {
+      print('Failed to load contacts: $e');
     }
   }
 
@@ -32,20 +40,39 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contacts'),
+        title: Row(
+          children: [
+            Image.asset('assets/images/logo.png', height: 40),
+            SizedBox(width: 10),
+            const Text('연락처'),
+          ],
+        ),
       ),
-      body: _contacts != null
+      body: contacts.isNotEmpty
           ? ListView.builder(
-        itemCount: _contacts!.length,
+        itemCount: contacts.keys.length,
         itemBuilder: (context, index) {
-          Contact contact = _contacts!.elementAt(index);
-          String? phoneNumber;
-          if (contact.phones != null && contact.phones!.isNotEmpty) {
-            phoneNumber = contact.phones!.elementAt(0).value;
-          }
-          return ListTile(
-            title: Text(contact.displayName ?? ''),
-            subtitle: Text(phoneNumber ?? ''),
+          String university = contacts.keys.elementAt(index);
+          List<dynamic> universityContacts = contacts[university]!;
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: ExpansionTile(
+                title: Text(university),
+                children: universityContacts.map((contact) {
+                  return ListTile(
+                    leading: Image.asset('assets/images/person.png', height: 40),
+                    title: Text(contact['role']),
+                    subtitle: Text(contact['contact']),
+                    trailing: Image.asset('assets/images/phone.png', height: 30),
+                  );
+                }).toList(),
+              ),
+            ),
           );
         },
       )

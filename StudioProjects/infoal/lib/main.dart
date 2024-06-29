@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';

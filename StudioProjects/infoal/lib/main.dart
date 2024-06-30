@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'contacts_page.dart';
-import 'gallery_page.dart';
+import 'contests_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     ContactsPage(),
-    GalleryPage(),
+    ContestsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -43,12 +43,12 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
+            icon: ImageIcon(AssetImage('assets/images/phone.png')),
             label: 'Contacts',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.photo_album),
-            label: 'Gallery',
+            icon: ImageIcon(AssetImage('assets/images/trophy.png')),
+            label: 'Contests',
           ),
         ],
         currentIndex: _selectedIndex,

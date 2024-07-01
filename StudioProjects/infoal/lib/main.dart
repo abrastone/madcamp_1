@@ -45,12 +45,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, List<String>> galleryImages = {};
 
 
-  static List<Widget> _widgetOptions = <Widget>[
-    ContactsPage(),
-    GalleryPage(),
-    DetailPage(),
-  ];
-
   void _addContact(Map<String, dynamic> contact) {
     setState(() {
       String group = contact['group'];
@@ -116,10 +110,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_album),
             label: 'Albums',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_album),
-            label: 'Detail',
           ),
         ],
         currentIndex: _selectedIndex,

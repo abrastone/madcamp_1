@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';
-
-import 'details_page.dart';
-
 import 'album_collection_page.dart';
 
 void main() {

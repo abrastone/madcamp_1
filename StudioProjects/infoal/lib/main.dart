@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, List<Map<String, dynamic>>> contacts = {};
   Map<String, List<String>> galleryImages = {};
 
+
   void _addContact(Map<String, dynamic> contact) {
     setState(() {
       String group = contact['group'];

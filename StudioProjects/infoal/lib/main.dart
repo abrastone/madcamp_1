@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';
+import 'details_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     ContactsPage(),
     GalleryPage(),
+    DetailPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -49,6 +51,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_album),
             label: 'Gallery',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.photo_album),
+            label: 'Detail',
           ),
         ],
         currentIndex: _selectedIndex,

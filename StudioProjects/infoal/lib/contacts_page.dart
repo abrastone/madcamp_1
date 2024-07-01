@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infoal/details_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -180,15 +181,21 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                   ),
                   ...groupContacts.map((contact) {
-                    return Card(
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: ListTile(
-                        leading: Image.asset('assets/images/person.png', height: 40),
-                        title: Text(contact['name']),
-                        subtitle: Text(contact['contact']),
-                        trailing: IconButton(
-                          icon: Image.asset('assets/images/phone.png', height: 30),
-                          onPressed: () => _makePhoneCall(contact['contact']),
+                    // 그룹 속에 사람 이름과 연락처 보여주는 부분
+                    return GestureDetector(
+                      onTap: (){ // 클릭했을 때 detail page로 넘어가게 함
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage(contact: contact)));
+                      },
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: ListTile(
+                          leading: Image.asset('assets/images/person.png', height: 40),
+                          title: Text(contact['name']),
+                          subtitle: Text(contact['contact']),
+                          trailing: IconButton( // 전화걸기 버튼
+                            icon: Image.asset('assets/images/phone.png', height: 30),
+                            onPressed: () => _makePhoneCall(contact['contact']),
+                          ),
                         ),
                       ),
                     );

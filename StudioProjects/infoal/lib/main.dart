@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';
-
-import 'details_page.dart';
-
 import 'album_collection_page.dart';
 
 void main() {
@@ -44,12 +41,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, List<Map<String, dynamic>>> contacts = {};
   Map<String, List<String>> galleryImages = {};
 
-
-  static List<Widget> _widgetOptions = <Widget>[
-    ContactsPage(),
-    GalleryPage(),
-    DetailPage(),
-  ];
 
   void _addContact(Map<String, dynamic> contact) {
     setState(() {
@@ -116,10 +107,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_album),
             label: 'Albums',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_album),
-            label: 'Detail',
           ),
         ],
         currentIndex: _selectedIndex,

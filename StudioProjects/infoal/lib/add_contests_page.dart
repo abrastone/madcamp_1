@@ -1,166 +1,7 @@
 // import 'dart:typed_data';
 // import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
-//
-// class ContestsPage extends StatefulWidget {
-//   final List<Map<String, dynamic>> contests;
-//   final Function(Map<String, dynamic>) onAddContest;
-//   final Function(int) onDeleteContest;
-//
-//   const ContestsPage({
-//     required this.contests,
-//     required this.onAddContest,
-//     required this.onDeleteContest,
-//     super.key,
-//   });
-//
-//   @override
-//   _ContestsPageState createState() => _ContestsPageState();
-// }
-//
-// class _ContestsPageState extends State<ContestsPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Row(
-//           children: [
-//             Image.asset('assets/images/logo.png', height: 40),
-//             SizedBox(width: 20),
-//             const Text('대회 찾기'),
-//           ],
-//         ),
-//       ),
-//       body: widget.contests.isEmpty
-//           ? Center(
-//         child: Text(
-//           '추가된 대회가 없습니다.',
-//           style: TextStyle(fontSize: 18, color: Colors.grey),
-//         ),
-//       )
-//           : ListView.builder(
-//         padding: EdgeInsets.all(16),
-//         itemCount: widget.contests.length,
-//         itemBuilder: (context, index) {
-//           final contest = widget.contests[index];
-//           return _buildEventCard(
-//             context,
-//             contest['title'],
-//             contest['date'],
-//             contest['organizer'],
-//             contest['posterImage'],
-//             contest['detailImages'],
-//             contest['maker'],
-//             contest['checker'],
-//             contest['minLevel'],
-//             contest['maxLevel'],
-//             index,
-//           );
-//         },
-//       ),
-//       floatingActionButton: FloatingActionButton.extended(
-//         onPressed: () async {
-//           final newContest = await Navigator.push(
-//             context,
-//             MaterialPageRoute(builder: (context) => AddContestPage()),
-//           );
-//           if (newContest != null) {
-//             widget.onAddContest(newContest);
-//           }
-//         },
-//         label: Text('추가하기'),
-//         icon: Icon(Icons.add),
-//       ),
-//       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-//     );
-//   }
-//
-//   Widget _buildEventCard(
-//       BuildContext context,
-//       String title,
-//       String date,
-//       String organizer,
-//       Uint8List posterImage,
-//       List<Uint8List> detailImages,
-//       int maker,
-//       int checker,
-//       String minLevel,
-//       String maxLevel,
-//       int index,
-//       ) {
-//     return Card(
-//       margin: EdgeInsets.symmetric(vertical: 10),
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(15),
-//       ),
-//       elevation: 5,
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           ClipRRect(
-//             borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-//             child: Image.memory(posterImage, fit: BoxFit.cover, height: 200, width: double.infinity),
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(16.0),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   title,
-//                   style: const TextStyle(
-//                     fontSize: 20,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 Text(
-//                   '일자: $date',
-//                   style: TextStyle(
-//                     fontSize: 14,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//                 Text(
-//                   '주최: $organizer',
-//                   style: TextStyle(
-//                     fontSize: 14,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//                 Text(
-//                   '모집: 출제($maker) / 검수($checker)',
-//                   style: TextStyle(
-//                     fontSize: 14,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//                 Text(
-//                   '난이도: ($minLevel) - ($maxLevel)',
-//                   style: TextStyle(
-//                     fontSize: 14,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.end,
-//                   children: [
-//                     IconButton(
-//                       icon: Icon(Icons.delete, color: Colors.red),
-//                       onPressed: () {
-//                         widget.onDeleteContest(index);
-//                       },
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+// import 'package:permission_handler/permission_handler.dart';
 //
 // class AddContestPage extends StatefulWidget {
 //   @override
@@ -182,23 +23,24 @@
 //   final ImagePicker _picker = ImagePicker();
 //
 //   Future<void> _pickImage(bool isPoster) async {
-//     if (isPoster) {
-//       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-//       if (image != null) {
-//         final bytes = await image.readAsBytes();
-//         setState(() {
-//           posterImage = bytes;
-//         });
-//       }
-//     } else {
 //       final List<XFile>? images = await _picker.pickMultiImage();
-//       if (images != null) {
-//         final bytesList = await Future.wait(images.map((image) => image.readAsBytes()));
-//         setState(() {
-//           detailImages = bytesList;
-//         });
+//       if (images != null && images.isNotEmpty) {
+//         if (isPoster) {
+//           final bytes = await images.first.readAsBytes();
+//           setState(() {
+//             posterImage = bytes;
+//           });
+//         } else {
+//           final List<Uint8List> newImages = [];
+//           for (var image in images) {
+//             final bytes = await image.readAsBytes();
+//             newImages.add(bytes);
+//           }
+//           setState(() {
+//             detailImages.addAll(newImages);
+//           });
+//         }
 //       }
-//     }
 //   }
 //
 //
@@ -216,7 +58,7 @@
 //             child: Column(
 //               children: <Widget>[
 //                 TextFormField(
-//                   decoration: const InputDecoration(
+//                   decoration: InputDecoration(
 //                     labelText: '제목',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -232,7 +74,7 @@
 //                 ),
 //                 SizedBox(height: 10),
 //                 TextFormField(
-//                   decoration: const InputDecoration(
+//                   decoration: InputDecoration(
 //                     labelText: '일자',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -248,7 +90,7 @@
 //                 ),
 //                 SizedBox(height: 10),
 //                 TextFormField(
-//                   decoration: const InputDecoration(
+//                   decoration: InputDecoration(
 //                     labelText: '주최',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -286,11 +128,15 @@
 //                     : Column(
 //                   children: [
 //                     Wrap(
-//                       children: detailImages.map((image) => Image.memory(image, height: 100)).toList(),
+//                       spacing: 10,
+//                       runSpacing: 10,
+//                       children: detailImages
+//                           .map((img) => Image.memory(img, height: 100))
+//                           .toList(),
 //                     ),
 //                     ElevatedButton(
 //                       onPressed: () => _pickImage(false),
-//                       child: Text('상세 이미지 변경'),
+//                       child: Text('상세 이미지 추가'),
 //                     ),
 //                   ],
 //                 ),

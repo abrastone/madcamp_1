@@ -1,41 +1,31 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactsPage extends StatefulWidget {
-  const ContactsPage({super.key});
+  final Map<String, List<Map<String, dynamic>>> contacts;
+  final Function(Map<String, dynamic>) onAddContact;
+  final Function(String) onViewGallery;
+
+  const ContactsPage({
+    required this.contacts,
+    required this.onAddContact,
+    required this.onViewGallery,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ContactsPageState createState() => _ContactsPageState();
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  Map<String, List<dynamic>> contacts = {};
   String searchQuery = "";
 
-  @override
-  void initState() {
-    super.initState();
-    _loadContacts();
-  }
-
-  Future<void> _loadContacts() async {
-    try {
-      String jsonString = await rootBundle.loadString('assets/data/contacts.json');
-      Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
-
-      Map<String, List<dynamic>> parsedContacts = {};
-      jsonResponse['data'].forEach((key, value) {
-        parsedContacts[key] = List<dynamic>.from(value);
-      });
-
-      setState(() {
-        contacts = parsedContacts;
-      });
-    } catch (e) {
-      print('Failed to load contacts: $e');
-    }
+  void _addNewContact(String group, String name, String contact) {
+    widget.onAddContact({
+      'group': group,
+      'name': name,
+      'contact': contact,
+    });
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
@@ -55,9 +45,8 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 검색어에 따라 필터링된 대학교 목록 생성
-    var filteredContacts = contacts.keys.where((university) {
-      return university.toLowerCase().contains(searchQuery.toLowerCase());
+    var filteredContacts = widget.contacts.keys.where((group) {
+      return group.toLowerCase().contains(searchQuery.toLowerCase());
     }).toList();
 
     return Scaffold(
@@ -70,9 +59,9 @@ class _ContactsPageState extends State<ContactsPage> {
           ],
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
+          preferredSize: Size.fromHeight(70.0),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: TextField(
               onChanged: (value) {
                 setState(() {
@@ -80,7 +69,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: '대회 검색',
+                hintText: '그룹 검색',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -90,14 +79,14 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
         ),
       ),
-      body: contacts.isNotEmpty
+      body: widget.contacts.isNotEmpty
           ? ListView.builder(
         itemCount: filteredContacts.length,
         itemBuilder: (context, index) {
-          String university = filteredContacts[index];
-          List<dynamic> universityContacts = contacts[university]!;
+          String group = filteredContacts[index];
+          List<Map<String, dynamic>> groupContacts = widget.contacts[group]!;
           return Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: Container(
               decoration: BoxDecoration(
                 boxShadow: [
@@ -111,7 +100,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 color: Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  width: 2,
+                  width: 3,
                   color: Colors.white12,
                 ),
               ),
@@ -119,21 +108,83 @@ class _ContactsPageState extends State<ContactsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      university,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    padding: const EdgeInsets.all(18.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          group,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.photo),
+                              onPressed: () {
+                                widget.onViewGallery(group);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    String name = '';
+                                    String contact = '';
+                                    return AlertDialog(
+                                      title: Text('연락처 추가하기'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextField(
+                                            decoration: InputDecoration(hintText: '이름'),
+                                            onChanged: (value) {
+                                              name = value;
+                                            },
+                                          ),
+                                          TextField(
+                                            decoration: InputDecoration(hintText: '연락처'),
+                                            onChanged: (value) {
+                                              contact = value;
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('취소'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            _addNewContact(group, name, contact);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('추가'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  ...universityContacts.map((contact) {
+                  ...groupContacts.map((contact) {
                     return Card(
                       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: ListTile(
                         leading: Image.asset('assets/images/person.png', height: 40),
-                        title: Text(contact['role']),
+                        title: Text(contact['name']),
                         subtitle: Text(contact['contact']),
                         trailing: IconButton(
                           icon: Image.asset('assets/images/phone.png', height: 30),
@@ -149,6 +200,50 @@ class _ContactsPageState extends State<ContactsPage> {
         },
       )
           : const Center(child: CircularProgressIndicator()),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              String group = '';
+              return AlertDialog(
+                title: Text('그룹 추가하기'),
+                content: TextField(
+                  decoration: InputDecoration(hintText: '그룹 이름'),
+                  onChanged: (value) {
+                    group = value;
+                  },
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('취소'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        if (!widget.contacts.containsKey(group)) {
+                          widget.contacts[group] = [];
+                          widget.onAddContact({
+                            'group': group,
+                          });
+                        }
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('추가'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        label: Text('그룹 추가하기'),
+        icon: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

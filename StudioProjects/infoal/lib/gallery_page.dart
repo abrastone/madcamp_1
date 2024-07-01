@@ -59,7 +59,7 @@ class _GalleryPageState extends State<GalleryPage> {
         ],
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1, // Ensures each grid cell is square
         ),

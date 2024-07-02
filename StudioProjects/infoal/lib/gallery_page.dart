@@ -76,8 +76,8 @@ class _GalleryPageState extends State<GalleryPage> {
                   ),
                 ),
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 3,
+                  right: 3,
                   child: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () => _deleteImage(index),

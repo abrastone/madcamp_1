@@ -1,0 +1,47 @@
+flutter_native_splash:
+  # Required parameter: you must set either color or background_image
+  color: "#BDD9FA"  # You can use a color
+  # background_image: "assets/background.png"  # Or use a background image
+
+  # The image parameter allows you to specify an image used in the splash screen. It must be a png file and should be sized for 4x pixel density.
+  image: assets/images/logo.png
+
+  # Dark mode configurations
+  # color_dark: "#042a49"  # Background color for dark mode
+  # background_image_dark: "assets/dark-background.png"  # Background image for dark mode
+  # image_dark: assets/splash-invert.png  # Splash image for dark mode
+
+  # Android 12 configurations
+  android_12:
+    color: "#BDD9FA"  # Splash screen background color for Android 12+
+    image: assets/images/logo.png  # Splash image for Android 12+
+
+  # Platform specific images can be specified with the following parameters
+  # image_android: assets/images/logo.png
+  # image_dark_android: assets/splash-invert-android.png
+  # image_ios: assets/splash-ios.png
+  # image_dark_ios: assets/splash-invert-ios.png
+  # image_web: assets/splash-web.gif
+  # image_dark_web: assets/splash-invert-web.gif
+  # background_image_android: "assets/background-android.png"
+  # background_image_dark_android: "assets/dark-background-android.png"
+  # background_image_ios: "assets/background-ios.png"
+  # background_image_dark_ios: "assets/dark-background-ios.png"
+  # background_image_web: "assets/background-web.png"
+  # background_image_dark_web: "assets/dark-background-web.png"
+  # branding_android: assets/brand-android.png
+  # branding_dark_android: assets/dart_dark-android.png
+  # branding_ios: assets/brand-ios.png
+  # branding_dark_ios: assets/dart_dark-ios.png
+  # branding_web: assets/brand-web.gif
+  # branding_dark_web: assets/dart_dark-web.gif
+
+  # android_gravity: center
+  # ios_content_mode: center
+  # web_image_mode: center
+
+  # android_screen_orientation: sensorLandscape
+  # fullscreen: true
+  # info_plist_files:
+  #   - 'ios/Runner/Info-Debug.plist'
+  #   - 'ios/Runner/Info-Release.plist'

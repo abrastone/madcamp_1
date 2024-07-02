@@ -59,7 +59,7 @@ class _GalleryPageState extends State<GalleryPage> {
         ],
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1, // Ensures each grid cell is square
         ),
@@ -76,8 +76,8 @@ class _GalleryPageState extends State<GalleryPage> {
                   ),
                 ),
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 3,
+                  right: 3,
                   child: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () => _deleteImage(index),

@@ -80,12 +80,12 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
         ),
       ),
-      body: widget.contacts.isNotEmpty
+      body: widget.contacts.isNotEmpty // 그룹 정보 및 연락처 띄우기
           ? ListView.builder(
         itemCount: filteredContacts.length,
         itemBuilder: (context, index) {
-          String group = filteredContacts[index];
-          List<Map<String, dynamic>> groupContacts = widget.contacts[group]!;
+          String group = filteredContacts[index]; // group: 현재 그룹의 이름
+          List<Map<String, dynamic>> groupContacts = widget.contacts[group]!; // groupContacts: 현재 그룹 내 연락처들
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -110,7 +110,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: Row(
+                    child: Row( // 그룹 (상단에 그룹 이름, Icons.photo, Icons.add)
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -180,13 +180,12 @@ class _ContactsPageState extends State<ContactsPage> {
                       ],
                     ),
                   ),
-                  ...groupContacts.map((contact) {
-                    // 그룹 속에 사람 이름과 연락처 보여주는 부분
+                  ...groupContacts.map((contact) { // 그룹 > 연락처
                     return GestureDetector(
                       onTap: (){ // 클릭했을 때 detail page로 넘어가게 함
                         Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage(contact: contact)));
                       },
-                      child: Card(
+                      child: Card( // 각 연락처 띄우기
                         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: ListTile(
                           leading: Image.asset('assets/images/person.png', height: 40),

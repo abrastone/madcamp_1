@@ -17,6 +17,61 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
+  void _addInfo(String name, String infoTitle, String text) {
+    setState((){
+      Hive_addInfo(name, infoTitle, text);
+    });
+  }
+
+  dynamic _infoAddButton(context, name, infoTitle) {
+    return IconButton(
+      icon: Icon(Icons.add),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            String text = '';
+            return AlertDialog(
+              title: Text('$infoTitle 추가하기'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(hintText: '추가할 내용을 입력해주세요.'),
+                    onChanged: (value) {
+                      text = value;
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('취소'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _addInfo(name, infoTitle, text);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('추가'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _deleteInfo(name, infoTitle, text) {
+    setState((){
+      Hive_deleteInfo(name, infoTitle, text);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     String name = widget.contact['name'];
@@ -37,7 +92,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 itemBuilder: (BuildContext context, int index) {
                   String infoTitle = infoKey[index];
                   List<String>? infoContents = info[infoTitle];
-                  if (infoContents == null) {
+                  if (infoContents == null || infoContents.isEmpty) {
                     print("case: infoContents == null");
                     return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -48,55 +103,8 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                             child: ExpansionTile(
                               title: Text(infoTitle),
+                              trailing: _infoAddButton(context, name, infoTitle),
                               children: [Text("아직 작성하지 않았습니다.")],
-                              // trailing: IconButton(
-                              //   icon: Icon(Icons.add),
-                              //   onPressed: () {
-                              //     showDialog(
-                              //       context: context,
-                              //       builder: (BuildContext context) {
-                              //         String name = '';
-                              //         String contact = '';
-                              //         return AlertDialog(
-                              //           title: Text('연락처 추가하기'),
-                              //           content: Column(
-                              //             mainAxisSize: MainAxisSize.min,
-                              //             children: [
-                              //               TextField(
-                              //                 decoration: InputDecoration(hintText: '이름'),
-                              //                 onChanged: (value) {
-                              //                   name = value;
-                              //                 },
-                              //               ),
-                              //               TextField(
-                              //                 decoration: InputDecoration(hintText: '연락처'),
-                              //                 onChanged: (value) {
-                              //                   contact = value;
-                              //                 },
-                              //               ),
-                              //             ],
-                              //           ),
-                              //           actions: [
-                              //             TextButton(
-                              //               onPressed: () {
-                              //                 Navigator.of(context).pop();
-                              //               },
-                              //               child: Text('취소'),
-                              //             ),
-                              //             TextButton(
-                              //               onPressed: () {
-                              //                 Hive_addPerson(name);
-                              //                 _addNewContact(group, name, contact);
-                              //                 Navigator.of(context).pop();
-                              //               },
-                              //               child: Text('추가'),
-                              //             ),
-                              //           ],
-                              //         );
-                              //       },
-                              //     );
-                              //   },
-                              // ),
                             )
                         )
                     );
@@ -111,11 +119,18 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                             child: ExpansionTile(
                               title: Text(infoTitle),
+                              trailing: _infoAddButton(context, name, infoTitle),
                               children: infoContents.map((infoContents) {
-                                return Card( // 각 연락처 띄우기
-                                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                return Card(
+                                  margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                   child: ListTile(
                                     title: Text(infoContents),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        _deleteInfo(name, infoTitle, infoContents);
+                                      },
+                                    ),
                                   ),
                                 );
                               }).toList(),

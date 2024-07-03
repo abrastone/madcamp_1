@@ -1,5 +1,7 @@
+// import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:infoal/details_page.dart';
+// import 'package:infoal/details_page.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';
 import 'album_collection_page.dart';
@@ -204,9 +206,10 @@ void Hive_init() async {
 void Hive_addPerson(String name) async {
   //Box<Person> people = Hive.box('people');
   Box<Person> people = await Hive.openBox<Person>("people");
-  //Map<String, List<String>?> nullPerson = {'특징': ['어쩌구저쩌구ㄴ러아ㅣㄴㄹ;ㅓ재댜ㅗㄹ내둘ㄴ우러농러ㅗㄴ어ㅘ니아ㅓㄴ앧ㄹ ㅜㅑㄷ랴됀', '으에에', '자살'], '고마워': null, '미안해': null, '속상해': null};
   Map<String, List<String>?> nullPerson = {'특징': null, '고마워': null, '미안해': null, '속상해': null};
-  people.put(name, Person(nullPerson));
+  if (people.get(name) == null) {
+    people.put(name, Person(nullPerson));
+  }
 }
 
 Future<Person> Hive_getPerson(String name) async {
@@ -218,4 +221,40 @@ Future<Person> Hive_getPerson(String name) async {
     return Person({'자살': ['죽을게']});
   }
   return ret;
+}
+
+void Hive_addInfo(String name, String infoTitle, String text) async {
+  //Box<Person> people = Hive.box('people');
+  Box<Person> people = await Hive.openBox<Person>("people");
+  Person? ret = people.get(name);
+  Map<String, List<String>?> newInfo = ret!.info;
+  List<String>? temp = ret!.info[infoTitle];
+  if (temp == null) {
+    temp = [text];
+  } else {
+    temp?.add(text);
+  }
+  newInfo[infoTitle] = temp;
+  people.put(name, Person(newInfo));
+}
+
+// void Hive_deleteInfo(String name, String infoTitle, String text) async {
+//   //Box<Person> people = Hive.box('people');
+//   Box<Person> people = await Hive.openBox<Person>("people");
+//   people.delete(name);
+// }
+
+void Hive_deleteInfo(String name, String infoTitle, String text) async {
+  Box<Person> people = await Hive.openBox<Person>("people");
+  Person? ret = people.get(name);
+  Map<String, List<String>?> newInfo = ret!.info;
+  List<String> temp = ret!.info[infoTitle]!;
+  temp.remove(text);
+  if (temp == null) {
+    newInfo[infoTitle] = null;
+  } else {
+    newInfo[infoTitle] = temp;
+  }
+  print(newInfo);
+  people.put(name, Person(newInfo));
 }

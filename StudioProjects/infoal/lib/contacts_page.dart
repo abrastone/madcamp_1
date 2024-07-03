@@ -34,6 +34,21 @@ class _ContactsPageState extends State<ContactsPage> {
     _saveData();
   }
 
+  void _deleteContact(String group, String name) {
+    setState(() {
+      widget.contacts[group]!.removeWhere((contact) => contact['name'] == name);
+
+    });
+    _saveData();
+  }
+
+  void _deleteGroup(String group) {
+    setState(() {
+      widget.contacts.remove(group);
+    });
+    _saveData();
+  }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(
       scheme: 'tel',
@@ -64,6 +79,13 @@ class _ContactsPageState extends State<ContactsPage> {
   Future<void> _saveData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('contacts', json.encode(widget.contacts));
+  }
+
+  String _formatPhoneNumber(String input) {
+    if (input.length == 11) {
+      return '${input.substring(0, 3)}-${input.substring(3, 7)}-${input.substring(7)}';
+    }
+    return input;
   }
 
   @override
@@ -180,6 +202,8 @@ class _ContactsPageState extends State<ContactsPage> {
                                               ),
                                               TextField(
                                                 decoration: InputDecoration(hintText: '연락처'),
+                                                keyboardType: TextInputType.number,
+                                                maxLength: 11,
                                                 onChanged: (value) {
                                                   contact = value;
                                                 },
@@ -213,7 +237,25 @@ class _ContactsPageState extends State<ContactsPage> {
                                             ),
                                             TextButton(
                                               onPressed: () {
-                                                _addNewContact(group, name, contact, birthday);
+                                                if (name.isEmpty || contact.isEmpty) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text('이름과 연락처를 입력하세요.'),
+                                                    ),
+                                                  );
+                                                  return;
+                                                }
+
+                                                if (groupContacts.any((c) => c['name'] == name)) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text('이미 존재하는 이름입니다.'),
+                                                    ),
+                                                  );
+                                                  return;
+                                                }
+
+                                                _addNewContact(group, name, _formatPhoneNumber(contact), birthday);
                                                 Navigator.of(context).pop();
                                               },
                                               child: Text('추가'),
@@ -224,6 +266,12 @@ class _ContactsPageState extends State<ContactsPage> {
                                     );
                                   },
                                 );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                _deleteGroup(group);
                               },
                             ),
                           ],
@@ -240,14 +288,28 @@ class _ContactsPageState extends State<ContactsPage> {
                         );
                       },
                       child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         child: ListTile(
                           leading: Image.asset('assets/images/person.png', height: 40),
                           title: Text(contact['name']),
-                          subtitle: Text('${contact['contact']}'),
-                          trailing: IconButton(
-                            icon: Image.asset('assets/images/phone.png', height: 30),
-                            onPressed: () => _makePhoneCall(contact['contact']),
+                          subtitle: Text(
+                              '${contact['contact']}',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Image.asset('assets/images/phone.png', height: 30),
+                                onPressed: () => _makePhoneCall(contact['contact']),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  _deleteContact(group, contact['name']);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -259,7 +321,12 @@ class _ContactsPageState extends State<ContactsPage> {
           );
         },
       )
-          : const Center(child: CircularProgressIndicator()),
+          : Center(
+        child: Text(
+          '연락처를 등록해주세요.',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showDialog(
@@ -283,14 +350,30 @@ class _ContactsPageState extends State<ContactsPage> {
                   ),
                   TextButton(
                     onPressed: () {
+                      if (group.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('그룹 이름을 입력하세요.'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (widget.contacts.containsKey(group)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('이미 존재하는 그룹입니다.'),
+                          ),
+                        );
+                        return;
+                      }
+
                       setState(() {
-                        if (!widget.contacts.containsKey(group)) {
-                          widget.contacts[group] = [];
-                          widget.onAddContact({
-                            'group': group,
-                          });
-                          _saveData();
-                        }
+                        widget.contacts[group] = [];
+                        widget.onAddContact({
+                          'group': group,
+                        });
+                        _saveData();
                       });
                       Navigator.of(context).pop();
                     },

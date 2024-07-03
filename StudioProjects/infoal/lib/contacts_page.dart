@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infoal/details_page.dart';
+import 'package:infoal/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -164,6 +165,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                         ),
                                         TextButton(
                                           onPressed: () {
+                                            Hive_addPerson(name);
                                             _addNewContact(group, name, contact);
                                             Navigator.of(context).pop();
                                           },

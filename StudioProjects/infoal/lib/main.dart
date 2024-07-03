@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:infoal/details_page.dart';
 import 'contacts_page.dart';
 import 'gallery_page.dart';
 import 'album_collection_page.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+part 'main.g.dart';
 
 void main() {
+  Hive_init();
+
   runApp(MyApp());
 }
 
@@ -115,4 +122,37 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+// Hive 관련
+@HiveType(typeId: 0)
+class Person extends HiveObject {
+  @HiveField(0)
+  Map<String, List<String>?> info;
+
+  Person(this.info);
+}
+
+void Hive_init() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(PersonAdapter());
+}
+
+void Hive_addPerson(String name) async {
+  //Box<Person> people = Hive.box('people');
+  Box<Person> people = await Hive.openBox<Person>("people");
+  //Map<String, List<String>?> nullPerson = {'특징': ['어쩌구저쩌구ㄴ러아ㅣㄴㄹ;ㅓ재댜ㅗㄹ내둘ㄴ우러농러ㅗㄴ어ㅘ니아ㅓㄴ앧ㄹ ㅜㅑㄷ랴됀', '으에에', '자살'], '고마워': null, '미안해': null, '속상해': null};
+  Map<String, List<String>?> nullPerson = {'특징': null, '고마워': null, '미안해': null, '속상해': null};
+  people.put(name, Person(nullPerson));
+}
+
+Future<Person> Hive_getPerson(String name) async {
+  //Box<Person> people = Hive.box('people');
+  Box<Person> people = await Hive.openBox<Person>("people");
+  Person? ret = people.get(name);
+  if (ret == null) {
+    print("자살");
+    return Person({'자살': ['죽을게']});
+  }
+  return ret;
 }

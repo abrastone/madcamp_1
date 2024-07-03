@@ -288,11 +288,14 @@ class _ContactsPageState extends State<ContactsPage> {
                         );
                       },
                       child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         child: ListTile(
                           leading: Image.asset('assets/images/person.png', height: 40),
                           title: Text(contact['name']),
-                          subtitle: Text('${contact['contact']}'),
+                          subtitle: Text(
+                              '${contact['contact']}',
+                            style: TextStyle(fontSize: 12),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
